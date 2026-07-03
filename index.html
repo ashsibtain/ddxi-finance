@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Team DD XI Finance"/>
+<title>Team DD XI Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c26;
+  --surface2: #1e2330;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --gold: #f0b429;
+  --green: #36d399;
+  --red: #f87171;
+  --blue: #60a5fa;
+  --text: #e8eaf0;
+  --text2: #8b90a0;
+  --text3: #555c70;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+h1,h2,h3,.label{font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
+
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.nav-logo span{color:var(--text2);font-weight:400;font-size:13px;margin-left:6px;}
+.admin-badge{background:var(--gold-dim);color:var(--gold);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;cursor:pointer;}
+.viewer-badge{background:var(--surface2);color:var(--text2);font-size:11px;padding:3px 10px;border-radius:20px;cursor:pointer;}
+
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:12px 18px;font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:0.5px;color:var(--text2);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab:hover{color:var(--text);}
+
+.page{display:none;padding:16px;max-width:680px;margin:0 auto;}
+.page.active{display:block;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px 12px;}
+.stat-label{font-size:11px;color:var(--text3);font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;}
+.stat-val.green{color:var(--green);}
+.stat-val.red{color:var(--red);}
+.stat-val.gold{color:var(--gold);}
+.stat-val.blue{color:var(--blue);}
+
+.entry-list{display:flex;flex-direction:column;gap:8px;}
+.entry{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;}
+.entry-left .entry-name{font-weight:500;font-size:14px;color:var(--text);}
+.entry-left .entry-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.entry-right{text-align:right;}
+.entry-amt{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;}
+.entry-amt.green{color:var(--green);}
+.entry-amt.red{color:var(--red);}
+.entry-date{font-size:11px;color:var(--text3);margin-top:2px;}
+.entry-actions{display:flex;gap:4px;margin-top:6px;}
+
+.player-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.player-row:last-child{border-bottom:none;}
+.player-row:hover{background:var(--surface2);}
+.player-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--gold);flex-shrink:0;}
+.player-name{flex:1;font-size:14px;font-weight:500;}
+.player-contrib{font-size:12px;color:var(--text2);}
+.player-detail{margin:8px 0;padding:12px;background:var(--surface);border-radius:var(--radius-sm);font-size:13px;display:none;}
+.player-detail.active{display:block;}
+
+.form-group{margin-bottom:12px;}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
+input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 12px;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius-sm);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.5px;cursor:pointer;border:none;transition:all .15s;}
+.btn-gold{background:var(--gold);color:#0f1117;}
+.btn-gold:hover{background:#d99f20;}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-full{width:100%;justify-content:center;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:28px 24px;width:min(320px,90vw);}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--border2);}
+.pin-dot.filled{background:var(--gold);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pin-key{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:18px;font-family:'Rajdhani',sans-serif;font-weight:700;cursor:pointer;text-align:center;color:var(--text);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold);color:var(--gold);padding:10px 20px;border-radius:24px;font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Team DD XI <span>Finance</span></div>
+  <div id="roleToggle" class="viewer-badge" onclick="openPinModal()">🔒 Viewer</div>
+</nav>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPage('dashboard',this)">Dashboard</div>
+  <div class="tab" onclick="showPage('contributions',this)">Contributions</div>
+  <div class="tab" onclick="showPage('expenses',this)">Expenses</div>
+  <div class="tab" onclick="showPage('players',this)">Players</div>
+  <div class="tab" onclick="showPage('reports',this)">Reports</div>
+  <div class="tab" onclick="showPage('history',this)">History</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="stat-grid" id="dashStats"></div>
+  <div class="card">
+    <div class="card-title">Fund balance</div>
+    <div id="balanceBar"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Recent activity</div>
+    <div id="recentActivity"></div>
+  </div>
+  <div class="share-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+    <button class="btn btn-gold btn-sm" onclick="syncFromSheet()">⬇ Sync from Sheet</button>
+    <button class="btn btn-gold btn-sm" onclick="syncToSheet()">⬆ Sync to Sheet</button>
+    <button class="btn btn-green btn-sm" onclick="whatsappShare()">📲 Share on WhatsApp</button>
+    <button class="btn btn-blue btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+</div>
+
+<!-- CONTRIBUTIONS -->
+<div id="page-contributions" class="page">
+  <div id="addContribForm" style="display:none;" class="card">
+    <div class="card-title">Add contribution</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Player</label><select id="contribPlayer"></select></div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" id="contribAmount" placeholder="500" min="1"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" id="contribDate"/></div>
+      <div class="form-group"><label class="form-label">Note</label><input type="text" id="contribNote" placeholder="Monthly fee"/></div>
+    </div>
+    <button class="btn btn-gold btn-full" onclick="addContribution()">Save Contribution</button>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">All contributions</div>
+    <div id="addContribBtn"></div>
+  </div>
+  <div class="entry-list" id="contribList"></div>
+</div>
+
+<!-- EXPENSES -->
+<div id="page-expenses" class="page">
+  <div id="addExpenseForm" style="display:none;" class="card">
+    <div class="card-title">Add expense</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select id="expCat">
+          <option>Ball</option><option>Ground fee</option><option>Refreshments</option>
+          <option>Equipment</option><option>Travel</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" id="expAmount" placeholder="1000" min="1"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" id="expDate"/></div>
+      <div class="form-group"><label class="form-label">Paid by</label><select id="expPaidBy"></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Details</label><textarea id="expDetails" placeholder="e.g. 3 match balls..."></textarea></div>
+    <button class="btn btn-gold btn-full" onclick="addExpense()">Save Expense</button>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">All expenses</div>
+    <div id="addExpBtn"></div>
+  </div>
+  <div class="entry-list" id="expList"></div>
+</div>
+
+<!-- PLAYERS -->
+<div id="page-players" class="page">
+  <div id="addPlayerForm" style="display:none;" class="card">
+    <div class="card-title">Add new player</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Player name</label><input type="text" id="newPlayerName" placeholder="e.g. Ashfaq Sibtain"/></div>
+      <div class="form-group"><label class="form-label">Jersey No.</label><input type="text" id="newPlayerJersey" placeholder="72"/></div>
+    </div>
+    <button class="btn btn-gold btn-full" onclick="addPlayer()">Add Player</button>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Players <span id="playerCount" style="color:var(--text3);font-size:14px;"></span></div>
+    <div id="addPlayerBtn"></div>
+  </div>
+  <div class="form-group" style="margin-bottom:12px;">
+    <input type="text" id="playerSearch" placeholder="Search player..." oninput="renderPlayers()" style="font-size:13px;"/>
+  </div>
+  <div class="card" id="playerBalanceList"></div>
+</div>
+
+<!-- REPORTS -->
+<div id="page-reports" class="page">
+  <div class="card">
+    <div class="card-title">Report Filters</div>
+    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Report Type</label>
+        <select id="reportType" onchange="renderReports()">
+          <option value="summary">Transaction Summary</option>
+          <option value="player">Player-wise Report</option>
+          <option value="category">Expense Category Report</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Filter by Player</label>
+        <select id="reportPlayer" onchange="renderReports()">
+          <option value="all">All Players</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">From Date</label>
+        <input type="date" id="reportFromDate" onchange="renderReports()"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">To Date</label>
+        <input type="date" id="reportToDate" onchange="renderReports()"/>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-sm" onclick="exportReportPDF()" style="width:100%;">📄 Export to PDF</button>
+  </div>
+
+  <div id="reportContent"></div>
+
+  <!-- Hidden printable report container -->
+  <div id="printableReport" style="display:none;position:fixed;left:-9999px;top:0;"></div>
+</div>
+
+<!-- HISTORY -->
+<div id="page-history" class="page">
+  <div class="form-group">
+    <label class="form-label">Filter by player</label>
+    <select id="historyPlayer" onchange="renderHistory()"></select>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pinModal">
+  <div class="modal">
+    <div class="modal-title">Admin Access</div>
+    <div class="modal-sub" id="pinModalSub">Enter 4-digit PIN to unlock admin mode</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-pad">
+      <div class="pin-key" onclick="pinInput('1')">1</div><div class="pin-key" onclick="pinInput('2')">2</div>
+      <div class="pin-key" onclick="pinInput('3')">3</div><div class="pin-key" onclick="pinInput('4')">4</div>
+      <div class="pin-key" onclick="pinInput('5')">5</div><div class="pin-key" onclick="pinInput('6')">6</div>
+      <div class="pin-key" onclick="pinInput('7')">7</div><div class="pin-key" onclick="pinInput('8')">8</div>
+      <div class="pin-key" onclick="pinInput('9')">9</div>
+      <div class="pin-key" onclick="pinClear()" style="font-size:13px;color:var(--text2)">CLR</div>
+      <div class="pin-key" onclick="pinInput('0')">0</div>
+      <div class="pin-key" onclick="closePinModal()" style="font-size:13px;color:var(--text2)">✕</div>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <div style="margin-top:12px;text-align:center;">
+      <button class="btn btn-outline btn-sm" onclick="showChangePinUI()" id="changePinBtn" style="display:none;">Change PIN</button>
+      <button class="btn btn-red btn-sm" onclick="logoutAdmin()" id="logoutBtn" style="display:none;">Logout Admin</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PIN_KEY = 'ddxi_admin_pin';
+const DATA_KEY = 'ddxi_data';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzpo9WXZEeOKK4kQSAI3rLFjm9O1uKMPo8XuSlPKbOfmsIBOqTeuS_MPZH0cg1DeVho/exec';
+
+let isAdmin = false;
+let pinBuffer = '';
+let changingPin = false;
+let firstPin = '';
+
+function getDefaultPlayers() {
+  return [
+    {id:'p1',name:'H P Meena',jersey:'333'},{id:'p2',name:'Sanjay Koul',jersey:'06'},
+    {id:'p3',name:'Ashfaq Sibtain',jersey:'72'},{id:'p4',name:'Shabir Dar',jersey:'99'},
+    {id:'p5',name:'Mudasir Amin',jersey:'313'},{id:'p6',name:'Shauib Beigh',jersey:'192'},
+    {id:'p7',name:'Asif Nabi Khan',jersey:'80'},{id:'p8',name:'Wasaaf Jeelani',jersey:'23'},
+    {id:'p9',name:'Asif Jeelani',jersey:'07'},{id:'p10',name:'Amjed Wani',jersey:'10'},
+    {id:'p11',name:'Shafi Shah',jersey:'707'},{id:'p12',name:'Muzamil Bhat',jersey:'02'},
+    {id:'p13',name:'Tahir Zargar',jersey:'03'},{id:'p14',name:'Numan Bhat',jersey:'13'},
+    {id:'p15',name:'M Hasan',jersey:'04'},{id:'p16',name:'Irfan Wani',jersey:'99'},
+    {id:'p17',name:'Peter',jersey:'01'},{id:'p18',name:'Umar Haji',jersey:'45'}
+  ];
+}
+
+function cleanAndDeduplicateData(data) {
+  if (!data) return {players: getDefaultPlayers(), contributions: [], expenses: []};
+  
+  const playerMap = new Map();
+  (data.players || []).forEach(p => {
+    if (!p || !p.name) return;
+    const key = p.id || `${p.name.toLowerCase()}-${p.jersey}`;
+    if (!playerMap.has(key)) playerMap.set(key, {...p});
+  });
+  data.players = Array.from(playerMap.values());
+
+  ['contributions', 'expenses'].forEach(key => {
+    const map = new Map();
+    (data[key] || []).forEach(item => {
+      if (item && item.id) map.set(item.id, {...item});
+    });
+    data[key] = Array.from(map.values());
+  });
+  return data;
+}
+
+function loadData() {
+  let raw = localStorage.getItem(DATA_KEY);
+  let data = raw ? JSON.parse(raw) : null;
+  data = cleanAndDeduplicateData(data);
+  if (data.players.length === 0) data.players = getDefaultPlayers();
+  saveData(data);
+  return data;
+}
+
+function saveData(d) {
+  localStorage.setItem(DATA_KEY, JSON.stringify(cleanAndDeduplicateData(d)));
+}
+
+function getPin() { return localStorage.getItem(ADMIN_PIN_KEY) || '1234'; }
+function fmt(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
+function fmtDate(s) {
+  if (!s) return '';
+  return new Date(s).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+}
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ================== SYNC ==================
+async function syncFromSheet() {
+  if (!WEB_APP_URL) return showToast('Please set WEB_APP_URL in code');
+  try {
+    const res = await fetch(WEB_APP_URL);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const cleaned = cleanAndDeduplicateData(data);
+    saveData(cleaned);
+    showToast('✅ Synced from Google Sheet');
+    renderPage('dashboard');
+  } catch(e) { showToast('❌ Sync failed'); }
+}
+
+async function syncToSheet() {
+  if (!WEB_APP_URL) return showToast('Please set WEB_APP_URL in code');
+  try {
+    const data = loadData();
+    await fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action: 'overwrite', data})
+    });
+    showToast('✅ Synced to Google Sheet');
+  } catch(e) { showToast('❌ Sync failed'); }
+}
+
+// ================== RENDERING ==================
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+  
+  renderPage(id);
+}
+
+function renderPage(id) {
+  if (id === 'dashboard') renderDashboard();
+  else if (id === 'contributions') renderContributions();
+  else if (id === 'expenses') renderExpenses();
+  else if (id === 'players') renderPlayers();
+  else if (id === 'reports') renderReports();
+  else if (id === 'history') renderHistory(); // REMOVED the 'true' flag here to stop destructive rebuilds
+}
+
+function renderDashboard() {
+  const d = loadData();
+  const totalIn = d.contributions.reduce((s,c) => s + Number(c.amount||0), 0);
+  const totalOut = d.expenses.reduce((s,e) => s + Number(e.amount||0), 0);
+  const balance = totalIn - totalOut;
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat"><div class="stat-label">Total collected</div><div class="stat-val green">${fmt(totalIn)}</div></div>
+    <div class="stat"><div class="stat-label">Total spent</div><div class="stat-val red">${fmt(totalOut)}</div></div>
+    <div class="stat"><div class="stat-label">Balance</div><div class="stat-val ${balance>=0?'gold':'red'}">${fmt(balance)}</div></div>
+    <div class="stat"><div class="stat-label">Players</div><div class="stat-val blue">${d.players.length}</div></div>
+  `;
+
+  const pct = totalIn > 0 ? Math.min(100, Math.round((totalOut/totalIn)*100)) : 0;
+  document.getElementById('balanceBar').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;color:var(--text2)">Spent ${pct}% of collected</span>
+      <span style="font-size:13px;color:var(--green)">${fmt(balance)} remaining</span>
+    </div>
+    <div class="progress-wrap" style="background:var(--border);border-radius:4px;height:5px;margin-top:6px;">
+      <div class="progress-bar" style="height:5px;border-radius:4px;background:${pct>80?'var(--red)':'var(--green)'};width:${pct}%;"></div>
+    </div>
+  `;
+
+  const all = [...d.contributions.map(c=>({...c,type:'contrib'})), ...d.expenses.map(e=>({...e,type:'expense'}))]
+    .sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,6);
+
+  document.getElementById('recentActivity').innerHTML = all.length === 0 ? 
+    '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No activity yet</div>' : 
+    all.map(item => {
+      if (item.type === 'contrib') {
+        const p = d.players.find(x => x.id === item.playerId);
+        return `<div class="player-row"><div class="player-avatar">${initials(p?p.name:'?')}</div>
+          <div style="flex:1"><div class="player-name">${p?p.name:'Unknown'}</div>
+          <div class="player-contrib">${fmtDate(item.date)} · ${item.note||'Contribution'}</div></div>
+          <div class="player-balance" style="color:var(--green)">+${fmt(item.amount)}</div></div>`;
+      } else {
+        return `<div class="player-row"><div class="player-avatar" style="background:var(--red-dim);color:var(--red)">EX</div>
+          <div style="flex:1"><div class="player-name">${item.category}</div>
+          <div class="player-contrib">${fmtDate(item.date)} · ${item.details||''}</div></div>
+          <div class="player-balance" style="color:var(--red)">-${fmt(item.amount)}</div></div>`;
+      }
+    }).join('');
+}
+
+function renderContributions() {
+  const d = loadData();
+  document.getElementById('contribPlayer').innerHTML = d.players.map(p => `<option value="${p.id}">${p.name} (#${p.jersey})</option>`).join('');
+  document.getElementById('contribDate').value = new Date().toISOString().split('T')[0];
+
+  const addBtn = document.getElementById('addContribBtn');
+  if (isAdmin) {
+    addBtn.innerHTML = `<button class="btn btn-gold btn-sm" onclick="toggleForm('addContribForm',this)">+ Add</button>`;
+  } else {
+    addBtn.innerHTML = `<button class="btn btn-outline btn-sm" onclick="openPinModal()">🔒 Admin only</button>`;
+    document.getElementById('addContribForm').style.display = 'none';
+  }
+
+  const sorted = [...d.contributions].sort((a,b) => new Date(b.date) - new Date(a.date));
+  const html = sorted.length === 0 ? '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No contributions yet</div>' :
+    sorted.map(c => {
+      const p = d.players.find(x => x.id === c.playerId);
+      return `<div class="entry">
+        <div class="entry-left">
+          <div class="entry-name">${p ? p.name : 'Unknown'}</div>
+          <div class="entry-meta">${c.note || 'Contribution'}</div>
+          ${isAdmin ? `<div class="entry-actions"><button class="btn btn-red btn-sm" onclick="deleteEntry('contributions','${c.id}')">Delete</button></div>` : ''}
+        </div>
+        <div class="entry-right">
+          <div class="entry-amt green">+${fmt(c.amount)}</div>
+          <div class="entry-date">${fmtDate(c.date)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  document.getElementById('contribList').innerHTML = html;
+}
+
+function renderExpenses() {
+  const d = loadData();
+  document.getElementById('expPaidBy').innerHTML = d.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+
+  const addBtn = document.getElementById('addExpBtn');
+  if (isAdmin) {
+    addBtn.innerHTML = `<button class="btn btn-gold btn-sm" onclick="toggleForm('addExpenseForm',this)">+ Add</button>`;
+  } else {
+    addBtn.innerHTML = `<button class="btn btn-outline btn-sm" onclick="openPinModal()">🔒 Admin only</button>`;
+    document.getElementById('addExpenseForm').style.display = 'none';
+  }
+
+  const sorted = [...d.expenses].sort((a,b) => new Date(b.date) - new Date(a.date));
+  const html = sorted.length === 0 ? '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No expenses yet</div>' :
+    sorted.map(e => {
+      const p = d.players.find(x => x.id === e.paidBy);
+      return `<div class="entry">
+        <div class="entry-left">
+          <div class="entry-name">${e.category}</div>
+          <div class="entry-meta">${e.details || ''}</div>
+          <div class="entry-meta" style="color:var(--text3)">Paid by: ${p ? p.name : 'Team'}</div>
+          ${isAdmin ? `<div class="entry-actions"><button class="btn btn-red btn-sm" onclick="deleteEntry('expenses','${e.id}')">Delete</button></div>` : ''}
+        </div>
+        <div class="entry-right">
+          <div class="entry-amt red">-${fmt(e.amount)}</div>
+          <div class="entry-date">${fmtDate(e.date)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  document.getElementById('expList').innerHTML = html;
+}
+
+function renderPlayers() {
+  const d = loadData();
+  const addBtn = document.getElementById('addPlayerBtn');
+  if (isAdmin) {
+    addBtn.innerHTML = `<button class="btn btn-gold btn-sm" onclick="toggleForm('addPlayerForm',this)">+ Add Player</button>`;
+  } else {
+    addBtn.innerHTML = `<button class="btn btn-outline btn-sm" onclick="openPinModal()">🔒 Admin only</button>`;
+    document.getElementById('addPlayerForm').style.display = 'none';
+  }
+
+  const search = (document.getElementById('playerSearch').value || '').toLowerCase().trim();
+  const filtered = search ? d.players.filter(p => 
+    p.name.toLowerCase().includes(search) || p.jersey.includes(search)
+  ) : d.players;
+
+  document.getElementById('playerCount').textContent = `(${d.players.length})`;
+
+  let html = '';
+  filtered.forEach(p => {
+    const contrib = d.contributions.filter(c => c.playerId === p.id).reduce((s,c) => s + Number(c.amount||0), 0);
+    html += `
+      <div class="player-row" onclick="togglePlayerDetail('${p.id}')">
+        <div class="player-avatar">${initials(p.name)}</div>
+        <div style="flex:1">
+          <div class="player-name">${p.name} <span style="color:var(--text3);font-size:12px">#${p.jersey}</span></div>
+          <div class="player-contrib">Contributed: ${fmt(contrib)}</div>
+        </div>
+        ${isAdmin ? `<button class="btn btn-red btn-sm" onclick="event.stopImmediatePropagation();deletePlayer('${p.id}',true)" style="font-size:16px;">×</button>` : ''}
+      </div>
+      <div id="detail-${p.id}" class="player-detail"></div>`;
+  });
+
+  document.getElementById('playerBalanceList').innerHTML = `<div class="card-title">Player Contributions</div>${html || '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No players found</div>'}`;
+}
+
+function togglePlayerDetail(pid) {
+  const detail = document.getElementById(`detail-${pid}`);
+  if (detail.classList.contains('active')) {
+    detail.classList.remove('active');
+    return;
+  }
+  const d = loadData();
+  const player = d.players.find(p => p.id === pid);
+  if (!player) return;
+
+  let html = `<strong>${player.name} (#${player.jersey})</strong><br><br>`;
+
+  const contribs = d.contributions.filter(c => c.playerId === pid)
+    .sort((a,b) => new Date(b.date) - new Date(a.date));
+  const exps = d.expenses.filter(e => e.paidBy === pid)
+    .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+  if (contribs.length) {
+    html += `<b>Contributions (${contribs.length})</b><br>`;
+    contribs.forEach(c => html += `• ${fmt(c.amount)} on ${fmtDate(c.date)} ${c.note ? `(${c.note})` : ''}<br>`);
+  }
+  if (exps.length) {
+    html += `<br><b>Expenses Paid (${exps.length})</b><br>`;
+    exps.forEach(e => html += `• ${e.category} - ${fmt(e.amount)} on ${fmtDate(e.date)}<br>`);
+  }
+  if (!contribs.length && !exps.length) html += 'No records yet.';
+
+  detail.innerHTML = html;
+  document.querySelectorAll('.player-detail').forEach(el => el.classList.remove('active'));
+  detail.classList.add('active');
+}
+
+function renderHistory() {
+  const d = loadData();
+  const sel = document.getElementById('historyPlayer');
+  if (!sel) return;
+
+  // Remember selection before rebuilding dropdown
+  const savedValue = sel.value || 'all';
+
+  // Rebuild dropdown options
+  sel.innerHTML = '<option value="all">All players</option>' + 
+    d.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+  // Restore selection safely
+  sel.value = savedValue;
+  if (!sel.value) sel.value = 'all';
+  
+  const pid = sel.value;
+
+  // Build a lookup map: player id -> player object for quick access
+  const playerMap = new Map(d.players.map(p => [p.id, p]));
+  const selectedPlayer = playerMap.get(pid);
+
+  // Helper: check if a contribution belongs to the selected player
+  // Uses multiple fallback strategies to handle data inconsistencies
+  function matchesPlayer(record, idField) {
+    if (pid === 'all') return true;
+    
+    // Strategy 1: Direct ID match (loose equality for string/number)
+    if (record[idField] == pid) return true;
+    
+    // Strategy 2: If record has no ID but has a name, match by name
+    if (!record[idField] && selectedPlayer && record.playerName) {
+      return record.playerName.toLowerCase() === selectedPlayer.name.toLowerCase();
+    }
+    
+    // Strategy 3: Try to find player by name if ID is missing in record
+    if (!record[idField] && record.name) {
+      return record.name.toLowerCase() === selectedPlayer.name.toLowerCase();
+    }
+    
+    return false;
+  }
+
+  // Filter with robust matching
+  const contribs = d.contributions
+    .filter(c => matchesPlayer(c, 'playerId'))
+    .map(c => ({...c, type: 'contrib'}));
+    
+  const exps = d.expenses
+    .filter(e => matchesPlayer(e, 'paidBy'))
+    .map(e => ({...e, type: 'expense'}));
+    
+  const all = [...contribs, ...exps].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  // Render
+  document.getElementById('historyList').innerHTML = all.length === 0 ? 
+    '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No records found</div>' : 
+    all.map(item => {
+      if (item.type === 'contrib') {
+        const p = d.players.find(x => x.id == item.playerId);
+        return `<div class="entry"><div class="entry-left"><div class="entry-name">${p ? p.name : 'Unknown'}</div><div class="entry-meta">Contribution · ${item.note || ''}</div></div>
+          <div class="entry-right"><div class="entry-amt green">+${fmt(item.amount)}</div><div class="entry-date">${fmtDate(item.date)}</div></div></div>`;
+      } else {
+        const p = d.players.find(x => x.id == item.paidBy);
+        return `<div class="entry"><div class="entry-left"><div class="entry-name">${item.category}</div><div class="entry-meta">Expense · ${item.details || ''} · Paid by ${p ? p.name : '?'}</div></div>
+          <div class="entry-right"><div class="entry-amt red">-${fmt(item.amount)}</div><div class="entry-date">${fmtDate(item.date)}</div></div></div>`;
+      }
+    }).join('');
+}
+// ================== REPORTS ==================
+function populateReportPlayers() {
+  const d = loadData();
+  const sel = document.getElementById('reportPlayer');
+  if (!sel) return;
+  const saved = sel.value || 'all';
+
+  sel.innerHTML = '<option value="all">All Players</option>' + 
+    d.players.map(p => `<option value="${p.id}">${p.name} (#${p.jersey})</option>`).join('');
+
+  sel.value = saved;
+  if (!sel.value) sel.value = 'all';
+}
+
+function filterByDateRange(items, fromDate, toDate) {
+  if (!fromDate && !toDate) return items;
+  return items.filter(item => {
+    if (!item.date) return false;
+    const d = new Date(item.date);
+    const itemTime = d.getTime();
+    if (fromDate && itemTime < new Date(fromDate).getTime()) return false;
+    if (toDate) {
+      const end = new Date(toDate);
+      end.setHours(23, 59, 59, 999);
+      if (itemTime > end.getTime()) return false;
+    }
+    return true;
+  });
+}
+
+function filterByPlayer(items, playerId, idField) {
+  if (playerId === 'all') return items;
+  return items.filter(item => item[idField] == playerId);
+}
+
+function renderReports() {
+  const d = loadData();
+  const type = document.getElementById('reportType').value;
+  const playerId = document.getElementById('reportPlayer').value;
+  const fromDate = document.getElementById('reportFromDate').value;
+  const toDate = document.getElementById('reportToDate').value;
+
+  populateReportPlayers();
+
+  // Apply filters
+  let contribs = filterByDateRange(d.contributions, fromDate, toDate);
+  let exps = filterByDateRange(d.expenses, fromDate, toDate);
+
+  contribs = filterByPlayer(contribs, playerId, 'playerId');
+  exps = filterByPlayer(exps, playerId, 'paidBy');
+
+  const totalIn = contribs.reduce((s,c) => s + Number(c.amount||0), 0);
+  const totalOut = exps.reduce((s,e) => s + Number(e.amount||0), 0);
+
+  let html = '';
+
+  // Simple totals header - NO balance calculation
+  html += `<div class="stat-grid" style="margin-bottom:12px;">
+    <div class="stat"><div class="stat-label">Total Collected</div><div class="stat-val green">${fmt(totalIn)}</div></div>
+    <div class="stat"><div class="stat-label">Total Spent</div><div class="stat-val red">${fmt(totalOut)}</div></div>
+    <div class="stat"><div class="stat-label">Contributions</div><div class="stat-val blue">${contribs.length}</div></div>
+    <div class="stat"><div class="stat-label">Expenses</div><div class="stat-val blue">${exps.length}</div></div>
+  </div>`;
+
+  if (type === 'summary') {
+    html += renderSummaryReport(d, contribs, exps);
+  } else if (type === 'player') {
+    html += renderPlayerReport(d, contribs, exps);
+  } else if (type === 'category') {
+    html += renderCategoryReport(d, exps);
+  }
+
+  document.getElementById('reportContent').innerHTML = html;
+}
+
+function renderSummaryReport(d, contribs, exps) {
+  const all = [
+    ...contribs.map(c => ({...c, type: 'Contribution', typeClass: 'green'})),
+    ...exps.map(e => ({...e, type: 'Expense', typeClass: 'red'}))
+  ].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+  let html = '<div class="card"><div class="card-title">Transaction List</div>';
+
+  if (all.length === 0) {
+    html += '<div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No transactions match the selected filters</div>';
+  } else {
+    html += '<div class="entry-list">';
+    all.forEach(item => {
+      if (item.type === 'Contribution') {
+        const p = d.players.find(x => x.id == item.playerId);
+        html += `<div class="entry">
+          <div class="entry-left">
+            <div class="entry-name" style="color:var(--green)">⬆ Contribution</div>
+            <div class="entry-meta">${p ? p.name : 'Unknown'} · ${item.note || 'N/A'}</div>
+          </div>
+          <div class="entry-right">
+            <div class="entry-amt green">+${fmt(item.amount)}</div>
+            <div class="entry-date">${fmtDate(item.date)}</div>
+          </div>
+        </div>`;
+      } else {
+        const p = d.players.find(x => x.id == item.paidBy);
+        html += `<div class="entry">
+          <div class="entry-left">
+            <div class="entry-name" style="color:var(--red)">⬇ Expense</div>
+            <div class="entry-meta">${item.category} · ${item.details || 'N/A'} · Paid by ${p ? p.name : '?'}</div>
+          </div>
+          <div class="entry-right">
+            <div class="entry-amt red">-${fmt(item.amount)}</div>
+            <div class="entry-date">${fmtDate(item.date)}</div>
+          </div>
+        </div>`;
+      }
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderPlayerReport(d, contribs, exps) {
+  const playerStats = {};
+
+  d.players.forEach(p => {
+    playerStats[p.id] = { name: p.name, jersey: p.jersey, contributions: [], expenses: [] };
+  });
+
+  contribs.forEach(c => {
+    if (playerStats[c.playerId]) playerStats[c.playerId].contributions.push(c);
+  });
+
+  exps.forEach(e => {
+    if (playerStats[e.paidBy]) playerStats[e.paidBy].expenses.push(e);
+  });
+
+  // Only show players who have data
+  const activePlayers = Object.values(playerStats).filter(p => p.contributions.length > 0 || p.expenses.length > 0);
+
+  if (activePlayers.length === 0) {
+    return '<div class="card"><div class="card-title">Player-wise Report</div><div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No data for selected filters</div></div>';
+  }
+
+  let html = '';
+
+  activePlayers.forEach(p => {
+    const totalContrib = p.contributions.reduce((s,c) => s + Number(c.amount||0), 0);
+    const totalExp = p.expenses.reduce((s,e) => s + Number(e.amount||0), 0);
+
+    html += `<div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="card-title" style="margin-bottom:0;">${p.name} <span style="color:var(--text3);font-size:13px">#${p.jersey}</span></div>
+        <div style="font-size:13px;color:var(--text2)">${p.contributions.length} contrib · ${p.expenses.length} exp</div>
+      </div>`;
+
+    if (p.contributions.length > 0) {
+      html += `<div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:6px;">CONTRIBUTIONS — ${fmt(totalContrib)}</div>`;
+      p.contributions.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(c => {
+        html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="color:var(--text2)">${fmtDate(c.date)} · ${c.note || 'N/A'}</span>
+          <span style="color:var(--green);font-weight:600;">+${fmt(c.amount)}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (p.expenses.length > 0) {
+      html += `<div><div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:6px;">EXPENSES PAID — ${fmt(totalExp)}</div>`;
+      p.expenses.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
+        html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="color:var(--text2)">${fmtDate(e.date)} · ${e.category} · ${e.details || 'N/A'}</span>
+          <span style="color:var(--red);font-weight:600;">-${fmt(e.amount)}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  return html;
+}
+
+function renderCategoryReport(d, exps) {
+  const catStats = {};
+
+  exps.forEach(e => {
+    const cat = e.category || 'Other';
+    if (!catStats[cat]) catStats[cat] = { amount: 0, count: 0, items: [] };
+    catStats[cat].amount += Number(e.amount||0);
+    catStats[cat].count++;
+    catStats[cat].items.push(e);
+  });
+
+  const sorted = Object.entries(catStats).sort((a,b) => b[1].amount - a[1].amount);
+  const total = exps.reduce((s,e) => s + Number(e.amount||0), 0);
+
+  let html = '';
+
+  sorted.forEach(([cat, data]) => {
+    const pct = total > 0 ? Math.round((data.amount/total)*100) : 0;
+
+    html += `<div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="card-title" style="margin-bottom:0;">${cat}</div>
+        <div style="font-size:13px;color:var(--text2)">${data.count} entries · ${pct}%</div>
+      </div>
+      <div style="font-size:18px;font-weight:700;color:var(--red);margin-bottom:12px;">${fmt(data.amount)}</div>
+      <div>`;
+
+    data.items.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
+      const p = d.players.find(x => x.id == e.paidBy);
+      html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+        <span style="color:var(--text2)">${fmtDate(e.date)} · ${e.details || 'N/A'} · Paid by ${p ? p.name : '?'}</span>
+        <span style="color:var(--red);font-weight:600;">-${fmt(e.amount)}</span>
+      </div>`;
+    });
+
+    html += '</div></div>';
+  });
+
+  if (sorted.length === 0) {
+    html = '<div class="card"><div class="card-title">Expense by Category</div><div class="empty" style="text-align:center;padding:32px;color:var(--text3);">No expenses match the selected filters</div></div>';
+  }
+
+  return html;
+}
+
+function exportReportPDF() {
+  const d = loadData();
+  const type = document.getElementById('reportType').value;
+  const playerId = document.getElementById('reportPlayer').value;
+  const fromDate = document.getElementById('reportFromDate').value;
+  const toDate = document.getElementById('reportToDate').value;
+
+  const typeNames = { summary: 'Transaction Summary', player: 'Player-wise Report', category: 'Expense Category Report' };
+  const selectedPlayer = playerId === 'all' ? 'All Players' : (d.players.find(p => p.id == playerId)?.name || 'Unknown');
+
+  // Apply same filters
+  let contribs = filterByDateRange(d.contributions, fromDate, toDate);
+  let exps = filterByDateRange(d.expenses, fromDate, toDate);
+  contribs = filterByPlayer(contribs, playerId, 'playerId');
+  exps = filterByPlayer(exps, playerId, 'paidBy');
+
+  const totalIn = contribs.reduce((s,c) => s + Number(c.amount||0), 0);
+  const totalOut = exps.reduce((s,e) => s + Number(e.amount||0), 0);
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+  let periodLabel = 'All Time';
+  if (fromDate && toDate) {
+    periodLabel = `${fmtDate(fromDate)} to ${fmtDate(toDate)}`;
+  } else if (fromDate) {
+    periodLabel = `From ${fmtDate(fromDate)}`;
+  } else if (toDate) {
+    periodLabel = `Until ${fmtDate(toDate)}`;
+  }
+
+  // Build printable HTML
+  let printHtml = `
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:800px;margin:0 auto;padding:30px;color:#1a1a2e;">
+    <div style="text-align:center;border-bottom:3px solid #f0b429;padding-bottom:20px;margin-bottom:30px;">
+      <h1 style="font-size:28px;margin:0 0 8px 0;color:#1a1a2e;">Team DD XI Finance</h1>
+      <p style="font-size:14px;color:#555;margin:0;">${typeNames[type]} Report</p>
+      <p style="font-size:13px;color:#777;margin:4px 0 0 0;">Player: ${selectedPlayer}</p>
+      <p style="font-size:13px;color:#777;margin:4px 0 0 0;">Period: ${periodLabel} | Generated: ${dateStr} at ${timeStr}</p>
+    </div>
+
+    <div style="display:flex;gap:20px;margin-bottom:30px;">
+      <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:16px;text-align:center;border-left:4px solid #36d399;">
+        <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;">Total Collected</div>
+        <div style="font-size:22px;font-weight:700;color:#36d399;margin-top:4px;">${fmt(totalIn)}</div>
+      </div>
+      <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:16px;text-align:center;border-left:4px solid #f87171;">
+        <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;">Total Spent</div>
+        <div style="font-size:22px;font-weight:700;color:#f87171;margin-top:4px;">${fmt(totalOut)}</div>
+      </div>
+      <div style="flex:1;background:#f8f9fa;border-radius:8px;padding:16px;text-align:center;border-left:4px solid #60a5fa;">
+        <div style="font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;">Transactions</div>
+        <div style="font-size:22px;font-weight:700;color:#60a5fa;margin-top:4px;">${contribs.length + exps.length}</div>
+      </div>
+    </div>
+  `;
+
+  // Add report-specific content
+  if (type === 'summary') {
+    printHtml += buildSummaryPrint(d, contribs, exps);
+  } else if (type === 'player') {
+    printHtml += buildPlayerPrint(d, contribs, exps);
+  } else if (type === 'category') {
+    printHtml += buildCategoryPrint(d, exps);
+  }
+
+  printHtml += `
+    <div style="margin-top:40px;padding-top:20px;border-top:1px solid #ddd;text-align:center;font-size:12px;color:#888;">
+      <p>© Team DD XI Finance | Designed & Developed by Ashfaq Sibtain</p>
+      <p style="margin-top:4px;">This report is computer generated and does not require signature.</p>
+    </div>
+  </div>`;
+
+  // Open print window
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>DD XI Finance - ${typeNames[type]}</title>
+      <style>
+        @media print {
+          body { margin: 0; padding: 20px; }
+          .no-print { display: none; }
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background: #f0b429; color: #1a1a2e; padding: 12px; text-align: left; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        tr:nth-child(even) { background: #fafafa; }
+        .text-right { text-align: right; }
+        .green { color: #36d399; }
+        .red { color: #f87171; }
+        .blue { color: #60a5fa; }
+        .section-title { font-size: 18px; color: #1a1a2e; margin: 24px 0 12px 0; font-weight: 600; border-bottom: 2px solid #f0b429; padding-bottom: 8px; }
+        .player-section { margin-bottom: 24px; border: 1px solid #eee; border-radius: 8px; padding: 16px; }
+        .player-header { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+        .sub-header { font-size: 13px; font-weight: 600; color: #555; margin: 12px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .item-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+        .item-date { color: #777; width: 120px; }
+        .item-desc { color: #333; flex: 1; padding: 0 12px; }
+        .item-amt { font-weight: 600; width: 100px; text-align: right; }
+      </style>
+    </head>
+    <body>
+      ${printHtml}
+      <div class="no-print" style="text-align:center;padding:30px;">
+        <button onclick="window.print()" style="background:#f0b429;color:#1a1a2e;border:none;padding:12px 32px;font-size:16px;font-weight:600;border-radius:8px;cursor:pointer;">🖨️ Print / Save as PDF</button>
+        <p style="font-size:12px;color:#888;margin-top:12px;">Click the button above to print or save as PDF</p>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+function buildSummaryPrint(d, contribs, exps) {
+  const all = [
+    ...contribs.map(c => ({...c, type: 'in'})),
+    ...exps.map(e => ({...e, type: 'out'}))
+  ].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+  let html = '<h2 style="font-size:18px;color:#1a1a2e;margin-bottom:16px;">Transaction List</h2>';
+  html += '<table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th class="text-right">Amount</th></tr></thead><tbody>';
+
+  all.forEach(item => {
+    if (item.type === 'in') {
+      const p = d.players.find(x => x.id == item.playerId);
+      html += `<tr>
+        <td>${fmtDate(item.date)}</td>
+        <td><span style="color:#36d399;font-weight:600;">Contribution</span></td>
+        <td>${p ? p.name : 'Unknown'} · ${item.note || 'N/A'}</td>
+        <td class="text-right green">+${fmt(item.amount)}</td>
+      </tr>`;
+    } else {
+      const p = d.players.find(x => x.id == item.paidBy);
+      html += `<tr>
+        <td>${fmtDate(item.date)}</td>
+        <td><span style="color:#f87171;font-weight:600;">Expense</span></td>
+        <td>${item.category} · ${item.details || 'N/A'} · Paid by ${p ? p.name : '?'}</td>
+        <td class="text-right red">-${fmt(item.amount)}</td>
+      </tr>`;
+    }
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function buildPlayerPrint(d, contribs, exps) {
+  const stats = {};
+  d.players.forEach(p => { stats[p.id] = { name: p.name, jersey: p.jersey, contributions: [], expenses: [] }; });
+  contribs.forEach(c => { if (stats[c.playerId]) stats[c.playerId].contributions.push(c); });
+  exps.forEach(e => { if (stats[e.paidBy]) stats[e.paidBy].expenses.push(e); });
+
+  const activePlayers = Object.values(stats).filter(p => p.contributions.length > 0 || p.expenses.length > 0);
+
+  if (activePlayers.length === 0) {
+    return '<p style="color:#888;text-align:center;padding:32px;">No data for selected filters</p>';
+  }
+
+  let html = '';
+
+  activePlayers.forEach(p => {
+    const totalContrib = p.contributions.reduce((s,c) => s + Number(c.amount||0), 0);
+    const totalExp = p.expenses.reduce((s,e) => s + Number(e.amount||0), 0);
+
+    html += `<div class="player-section">
+      <div class="player-header">${p.name} <span style="color:#888;font-weight:400;font-size:14px;">#${p.jersey}</span></div>`;
+
+    if (p.contributions.length > 0) {
+      html += `<div class="sub-header" style="color:#36d399;">Contributions — ${fmt(totalContrib)}</div>`;
+      p.contributions.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(c => {
+        html += `<div class="item-row">
+          <span class="item-date">${fmtDate(c.date)}</span>
+          <span class="item-desc">${c.note || 'N/A'}</span>
+          <span class="item-amt green">+${fmt(c.amount)}</span>
+        </div>`;
+      });
+    }
+
+    if (p.expenses.length > 0) {
+      html += `<div class="sub-header" style="color:#f87171;">Expenses Paid — ${fmt(totalExp)}</div>`;
+      p.expenses.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
+        html += `<div class="item-row">
+          <span class="item-date">${fmtDate(e.date)}</span>
+          <span class="item-desc">${e.category} · ${e.details || 'N/A'}</span>
+          <span class="item-amt red">-${fmt(e.amount)}</span>
+        </div>`;
+      });
+    }
+
+    html += '</div>';
+  });
+
+  return html;
+}
+
+function buildCategoryPrint(d, exps) {
+  const catStats = {};
+  exps.forEach(e => {
+    const cat = e.category || 'Other';
+    if (!catStats[cat]) catStats[cat] = { amount: 0, count: 0, items: [] };
+    catStats[cat].amount += Number(e.amount||0);
+    catStats[cat].count++;
+    catStats[cat].items.push(e);
+  });
+
+  const sorted = Object.entries(catStats).sort((a,b) => b[1].amount - a[1].amount);
+  const total = exps.reduce((s,e) => s + Number(e.amount||0), 0);
+
+  if (sorted.length === 0) {
+    return '<p style="color:#888;text-align:center;padding:32px;">No expenses match the selected filters</p>';
+  }
+
+  let html = '';
+
+  sorted.forEach(([cat, data]) => {
+    const pct = total > 0 ? Math.round((data.amount/total)*100) : 0;
+
+    html += `<div class="player-section">
+      <div class="player-header">${cat} <span style="color:#888;font-weight:400;font-size:14px;">${data.count} entries · ${pct}% of total</span></div>
+      <div style="font-size:18px;font-weight:700;color:#f87171;margin-bottom:12px;">${fmt(data.amount)}</div>`;
+
+    data.items.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
+      const p = d.players.find(x => x.id == e.paidBy);
+      html += `<div class="item-row">
+        <span class="item-date">${fmtDate(e.date)}</span>
+        <span class="item-desc">${e.details || 'N/A'} · Paid by ${p ? p.name : '?'}</span>
+        <span class="item-amt red">-${fmt(e.amount)}</span>
+      </div>`;
+    });
+
+    html += '</div>';
+  });
+
+  // Total row
+  html += `<div style="margin-top:16px;padding:12px;background:#f8f9fa;border-radius:8px;border-left:4px solid #f0b429;">
+    <div style="display:flex;justify-content:space-between;font-weight:600;">
+      <span>Total Expenses</span>
+      <span style="color:#f87171;">${fmt(total)}</span>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+// Form & CRUD
+function toggleForm(id, btn) {
+  const f = document.getElementById(id);
+  const isOpen = f.style.display === 'block';
+  f.style.display = isOpen ? 'none' : 'block';
+  if (btn) btn.textContent = isOpen ? '+ Add' : '✕ Close';
+}
+
+function addContribution() {
+  if (!isAdmin) return showToast('Admin access required');
+  const d = loadData();
+  const pid = document.getElementById('contribPlayer').value;
+  const amt = parseFloat(document.getElementById('contribAmount').value);
+  const date = document.getElementById('contribDate').value;
+  const note = document.getElementById('contribNote').value.trim();
+  if (!pid || !amt || amt <= 0 || !date) return showToast('Fill all fields');
+
+  d.contributions.push({id:uid(), playerId:pid, amount:amt, date, note});
+  saveData(d);
+  document.getElementById('contribAmount').value = '';
+  document.getElementById('contribNote').value = '';
+  showToast('Contribution saved!');
+  renderContributions();
+}
+
+function addExpense() {
+  if (!isAdmin) return showToast('Admin access required');
+  const d = loadData();
+  const cat = document.getElementById('expCat').value;
+  const amt = parseFloat(document.getElementById('expAmount').value);
+  const date = document.getElementById('expDate').value;
+  const paidBy = document.getElementById('expPaidBy').value;
+  const details = document.getElementById('expDetails').value.trim();
+  if (!cat || !amt || amt <= 0 || !date) return showToast('Fill all fields');
+
+  d.expenses.push({id:uid(), category:cat, amount:amt, date, paidBy, details});
+  saveData(d);
+  document.getElementById('expAmount').value = '';
+  document.getElementById('expDetails').value = '';
+  showToast('Expense saved!');
+  renderExpenses();
+}
+
+function addPlayer() {
+  if (!isAdmin) return showToast('Admin access required');
+  const d = loadData();
+  const name = document.getElementById('newPlayerName').value.trim();
+  const jersey = document.getElementById('newPlayerJersey').value.trim();
+  if (!name) return showToast('Enter player name');
+
+  if (d.players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    return showToast('Player already exists!');
+  }
+
+  d.players.push({id:uid(), name, jersey: jersey || '?'});
+  saveData(d);
+  document.getElementById('newPlayerName').value = '';
+  document.getElementById('newPlayerJersey').value = '';
+  showToast('Player added!');
+  renderPlayers();
+}
+
+function deletePlayer(pid) {
+  if (!isAdmin) return showToast('Admin access required');
+  const d = loadData();
+  const p = d.players.find(x => x.id === pid);
+  if (!p) return;
+  if (!confirm(`Remove ${p.name}?`)) return;
+  d.players = d.players.filter(x => x.id !== pid);
+  saveData(d);
+  showToast(`${p.name} removed`);
+  renderPlayers();
+}
+
+function deleteEntry(type, id) {
+  if (!isAdmin) return showToast('Admin access required');
+  if (!confirm('Delete this entry?')) return;
+  const d = loadData();
+  d[type] = d[type].filter(x => x.id !== id);
+  saveData(d);
+  showToast('Deleted');
+  if (type === 'contributions') renderContributions();
+  else renderExpenses();
+}
+
+// Share & Export
+function whatsappShare() {
+  const d = loadData();
+  const totalIn = d.contributions.reduce((s,c)=>s+Number(c.amount||0),0);
+  const totalOut = d.expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  const bal = totalIn - totalOut;
+  const msg = `*DD XI Finance Summary*\n💰 Collected: ₹${totalIn}\n🏏 Spent: ₹${totalOut}\n✅ Balance: ₹${bal}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg));
+}
+
+function exportCSV() {
+  const d = loadData();
+  let csv = 'Type,Player/Category,Amount,Date,Note/Details\n';
+  d.contributions.forEach(c => {
+    const p = d.players.find(x => x.id === c.playerId);
+    csv += `Contribution,"${p ? p.name : 'Unknown'}",${c.amount},${c.date},"${c.note||''}"\n`;
+  });
+  d.expenses.forEach(e => {
+    csv += `Expense,"${e.category}",${e.amount},${e.date},"${e.details||''}"\n`;
+  });
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `DDXI_Finance_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('CSV exported!');
+}
+
+// PIN System
+function openPinModal() {
+  pinBuffer = ''; changingPin = false; firstPin = '';
+  updateDots();
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinModalSub').textContent = isAdmin ? 'Admin mode active' : 'Enter 4-digit PIN';
+  document.getElementById('changePinBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+  document.getElementById('logoutBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+  document.getElementById('pinModal').classList.add('open');
+}
+
+function closePinModal() {
+  document.getElementById('pinModal').classList.remove('open');
+  pinBuffer = ''; changingPin = false; firstPin = '';
+  updateDots();
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function pinInput(k) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += k;
+  updateDots();
+  if (pinBuffer.length === 4) setTimeout(checkPin, 150);
+}
+
+function pinClear() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updateDots();
+}
+
+function checkPin() {
+  if (changingPin) {
+    if (!firstPin) {
+      firstPin = pinBuffer; pinBuffer = ''; updateDots();
+      document.getElementById('pinModalSub').textContent = 'Confirm new PIN';
+      return;
+    }
+    if (pinBuffer === firstPin) {
+      localStorage.setItem(ADMIN_PIN_KEY, pinBuffer);
+      showToast('PIN changed!');
+      closePinModal();
+    } else {
+      document.getElementById('pinError').textContent = 'PINs do not match';
+      pinBuffer = ''; firstPin = ''; updateDots();
+    }
+    return;
+  }
+
+  if (pinBuffer === getPin()) {
+    isAdmin = true;
+    updateAdminUI();
+    showToast('Admin mode unlocked!');
+    closePinModal();
+  } else {
+    document.getElementById('pinError').textContent = 'Wrong PIN';
+    pinBuffer = '';
+    updateDots();
+  }
+}
+
+function logoutAdmin() {
+  isAdmin = false;
+  updateAdminUI();
+  showToast('Logged out');
+  closePinModal();
+}
+
+function showChangePinUI() {
+  changingPin = true; firstPin = ''; pinBuffer = '';
+  updateDots();
+  document.getElementById('pinModalSub').textContent = 'Enter new PIN (4 digits)';
+  document.getElementById('pinError').textContent = '';
+}
+
+function updateAdminUI() {
+  const badge = document.getElementById('roleToggle');
+  if (isAdmin) {
+    badge.className = 'admin-badge';
+    badge.textContent = '🔓 Admin';
+  } else {
+    badge.className = 'viewer-badge';
+    badge.textContent = '🔒 Viewer';
+  }
+  const active = document.querySelector('.tab.active');
+  if (active) active.click();
+}
+
+// Initialize
+renderDashboard();
+</script>
+
+<div style="text-align:center;padding:14px 10px 24px;color:var(--text3);font-size:11px;">
+  © Designed & Developed by Ashfaq Sibtain
+</div>
+
+</body>
+</html>
