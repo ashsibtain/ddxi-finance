@@ -379,14 +379,15 @@ async function syncToSheet() {
     const data = loadData();
     await fetch(WEB_APP_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({action: 'overwrite', data})
     });
     showToast('✅ Synced to Google Sheet');
   } catch(e) { showToast('❌ Sync failed'); }
 }
-
-// ================== RENDERING ==================
+  
+  // ================== RENDERING ==================
 function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
